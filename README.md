@@ -38,17 +38,7 @@
 
 ## 💡 精选项目
 
-### Survivors游戏项目
-![Survivors游戏截图](bg.jpg)  
-这是一个基于C++和Qt框架开发的动作生存类游戏。玩家可以选择不同类型的英雄，在游戏地图中与各种敌人展开战斗。游戏具备丰富的武器系统、角色升级机制，还支持多种控制模式。同时，游戏采用了模块化的设计，便于代码的维护和扩展。  
-**技术栈**: C++, Qt, CMake  
-[查看项目](https://github.com/kyc001) | [查看源码](https://github.com/kyc001)
-
-### 基于 YOLOv5 的目标检测系统
-![项目截图](https://raw.githubusercontent.com/ultralytics/assets/main/yolov8/banner-yolov8.png)  
-这是一个基于 YOLOv5 的目标检测系统。YOLOv5 是由 Ultralytics 开发的尖端计算机视觉模型，基于 PyTorch 框架，以其易用性、速度和准确性而闻名。该系统可用于各种视觉 AI 任务，包括目标检测、图像分割和图像分类。系统支持多种数据集，如 COCO、Argoverse、Objects365 等，并且提供了图形化界面，方便用户进行操作。  
-**技术栈**: Python, PyTorch, YOLOv5, OpenCV  
-[查看项目](https://github.com/kyc001/aimbot-on-yolov5) | [查看源码](https://github.com/ultralytics/yolov5)
+暂无（bushi
 
 ## 📊 GitHub 统计
 ![GitHub Stats](https://github-readme-stats.vercel.app/api?username=kyc001&show_icons=true&theme=radical&rank_icon=github)  
