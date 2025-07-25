@@ -8,7 +8,6 @@
   <!-- 个人信息 -->
   <h1 id="profile-name" class="text-3xl font-bold">kyc001</h1>
   <p id="profile-title" class="text-xl text-blue-600">24级计算机科学与技术本科生在读</p>
-  <p id="profile-bio" class="text-gray-600">Think twice,Code Once.</p>
 
   <!-- 社交链接 -->
   <div class="mt-4 space-x-4">
