@@ -7,7 +7,7 @@
 
   <!-- 个人信息 -->
   <h1 id="profile-name" class="text-3xl font-bold">kyc001</h1>
-  <p id="profile-title" class="text-xl text-blue-600">24级计算机科学与技术本科生在读</p>
+  <p id="profile-title" class="text-xl text-blue-600">计算机科学与技术专业在读</p>
 
   <!-- 社交链接 -->
   <div class="mt-4 space-x-4">
@@ -23,8 +23,7 @@
 </div>
 
 ##  关于我
-- NKU 24级本科生
-- 喜欢AI，数学，物理
+- 喜欢数学，物理
 
 
 
