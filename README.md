@@ -5,11 +5,9 @@
 
   <p>
     <a href="mailto:kyc001@mail.nankai.edu.cn"><img src="https://img.shields.io/badge/Email-kyc001%40mail.nankai.edu.cn-blue?style=flat-square&logo=gmail" alt="Email"></a>
+    <a href="https://kyc001.github.io/"><img src="https://img.shields.io/badge/Blog-kyc001.github.io-orange?style=flat-square&logo=rss" alt="Blog"></a>
+    <a href="https://github.com/kyc001"><img src="https://img.shields.io/github/followers/kyc001?label=Follow&style=social" alt="GitHub"></a>
   </p>
-<div align="center">
-  <img height="160" src="https://github-readme-stats.vercel.app/api?username=kyc001&show_icons=true&theme=tokyonight&hide_border=true" alt="GitHub Stats">
-  <img height="160" src="https://github-readme-stats.vercel.app/api/top-langs/?username=kyc001&layout=compact&theme=tokyonight&hide_border=true" alt="Top Languages">
-</div>
 
 </div>
 
@@ -42,6 +40,16 @@
 
 </div>
 
+---
+
+## 📊 GitHub Stats
+
+<div align="center">
+  <img height="160" src="https://github-readme-stats.vercel.app/api?username=kyc001&show_icons=true&theme=tokyonight&hide_border=true" alt="GitHub Stats">
+  <img height="160" src="https://github-readme-stats.vercel.app/api/top-langs/?username=kyc001&layout=compact&theme=tokyonight&hide_border=true" alt="Top Languages">
+</div>
+
+---
 
 <div align="center">
 
