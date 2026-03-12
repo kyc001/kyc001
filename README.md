@@ -17,8 +17,6 @@
 
 南开大学计算机科学与技术 24 级本科生。
 
-💡 **兴趣**：喜欢开发。
-
 🔬 **研究方向**：3D 重建 / 视频生成 / World Model
 
 📦 **过往工作**：Jittor 框架下目标检测模型复现（[Gold-YOLO](https://github.com/kyc001/Gold-YOLO-Jittor)、[RT-DETR](https://github.com/kyc001/RT-DETR-Jittor)、[NanoDet](https://github.com/kyc001/NanoDet)）
