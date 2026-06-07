@@ -75,30 +75,27 @@ Diffusion & Generative Editing  ·  Graph Learning  ·  Optimal Transport
 | [**coursehunt**](https://github.com/kyc001/coursehunt) | github课程仓库检索 | `Python` `Tooling` |
 
 ---
-
 ## 📊 GitHub Stats
 
 <div align="center">
 
-<!-- 概览：含 Total Stars / Contributions 等 -->
-<img src="https://raw.githubusercontent.com/vn7n24fzkq/github-profile-summary-cards/master/profile-summary-card-images/tokyonight/profile-details.svg?username=kyc001" alt="profile details" />
+<img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=kyc001&theme=tokyonight" alt="profile details" />
 
 <br/>
 
-<img height="200" src="https://raw.githubusercontent.com/vn7n24fzkq/github-profile-summary-cards/master/profile-summary-card-images/tokyonight/repos-per-language.svg?username=kyc001" alt="repos per language" />
-<img height="200" src="https://raw.githubusercontent.com/vn7n24fzkq/github-profile-summary-cards/master/profile-summary-card-images/tokyonight/most-commit-language.svg?username=kyc001" alt="most commit language" />
+<img height="200" src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=kyc001&theme=tokyonight" alt="repos per language" />
+<img height="200" src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=kyc001&theme=tokyonight" alt="most commit language" />
 
 <br/>
 
-<img height="200" src="https://raw.githubusercontent.com/vn7n24fzkq/github-profile-summary-cards/master/profile-summary-card-images/tokyonight/stats.svg?username=kyc001" alt="stats" />
-<img height="200" src="https://raw.githubusercontent.com/vn7n24fzkq/github-profile-summary-cards/master/profile-summary-card-images/tokyonight/productive-time.svg?username=kyc001&utcOffset=8" alt="productive time" />
+<img height="200" src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=kyc001&theme=tokyonight" alt="stats" />
+<img height="200" src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=kyc001&theme=tokyonight&utcOffset=8" alt="productive time" />
 
-<!-- 连续贡献天数 -->
 <br/>
+
 <img src="https://github-readme-streak-stats.herokuapp.com/?user=kyc001&hide_border=true&theme=tokyonight" alt="streak" />
 
 </div>
-
 ---
 
 <div align="center">
