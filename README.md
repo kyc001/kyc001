@@ -33,7 +33,7 @@
 | **生成模型** | Diffusion / Flow-Matching |
 | **视频生成** | Wan / CogVideoX 架构、长视频与可控生成 |
 | **世界模型** | 交互式视频生成 / Interactive World Model |
-| **系统方向** | Agent Runtime、AI Infra、分布式训练 |
+| **系统方向** | Agent Runtime |
 
 </div>
 
