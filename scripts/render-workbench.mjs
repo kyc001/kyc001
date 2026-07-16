@@ -1,6 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 
 const data = JSON.parse(readFileSync('data/usage.json', 'utf8'));
+const embeddedFont = readFileSync('assets/workbench-font.css', 'utf8');
 const total = data.models.reduce((sum, model) => sum + model.tokens, 0);
 const totalSessions = data.sources.reduce((sum, source) => sum + source.sessions, 0);
 const end = new Date(data.updatedAt || Date.now());
@@ -162,38 +163,49 @@ function render(mode) {
   const claude = sourceTotals.get('claude') || { tokens: 0, sessions: 0 };
   const label = `kyc001 vibe coding stats: ${compact(total)} tokens across ${activeDays} active days`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="840" height="608" viewBox="0 0 840 608" role="img" aria-label="${safe(label)}">
+  <defs>
+    <linearGradient id="canvas" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${theme.background}"/><stop offset="1" stop-color="${mode === 'dark' ? '#080C11' : '#F5F8FC'}"/></linearGradient>
+    <linearGradient id="hero-gradient" x1="0" y1="0" x2="1" y2="0"><stop stop-color="${theme.accentSoft}"/><stop offset="1" stop-color="${theme.accent}"/></linearGradient>
+    <linearGradient id="panel-glow" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${theme.accent}" stop-opacity=".42"/><stop offset=".45" stop-color="${theme.stroke}" stop-opacity=".08"/><stop offset="1" stop-color="${theme.stroke}" stop-opacity="0"/></linearGradient>
+    <radialGradient id="terrain-glow" cx="70%" cy="78%" r="54%"><stop stop-color="${theme.accent}" stop-opacity="${mode === 'dark' ? '.13' : '.09'}"/><stop offset="1" stop-color="${theme.accent}" stop-opacity="0"/></radialGradient>
+    <filter id="panel-shadow" x="-10%" y="-20%" width="120%" height="150%"><feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#000000" flood-opacity="${mode === 'dark' ? '.30' : '.10'}"/></filter>
+    <filter id="soft-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="10"/></filter>
+  </defs>
   <style>
-    text{font-family:'Cascadia Code','JetBrains Mono','SFMono-Regular',Consolas,monospace;letter-spacing:0}
-    .title{fill:${theme.ink};font-size:20px;font-weight:700;letter-spacing:1.4px}.subtitle{fill:${theme.muted};font-size:11px;font-weight:600}.hero{fill:${theme.accent};font-size:39px;font-weight:750}.hero-unit{fill:${theme.muted};font-size:12px}.hero-label,.eyebrow{fill:${theme.muted};font-size:9px;font-weight:650;letter-spacing:.8px}
-    .panel,.pill{fill:${theme.panel};stroke:${theme.stroke};stroke-width:1}.panel-label{fill:${theme.muted};font-size:11px;font-weight:700;letter-spacing:.8px}.stat{fill:${theme.ink};font-size:23px;font-weight:730}.stat-label{fill:${theme.muted};font-size:9px;font-weight:650;letter-spacing:.55px}
-    .month{fill:${theme.faint};font-size:7px;font-weight:650}.peak{fill:${theme.ink};font-size:8px;font-weight:700}.pin{stroke:${theme.accent};stroke-width:1;opacity:.8}.model-name{fill:${theme.ink};font-size:11px;font-weight:650}.model-num,.model-source{fill:${theme.muted};font-size:10px;font-weight:600}.bar-track{fill:${theme.grid}}.empty{fill:${theme.muted};font-size:10px}.divider{stroke:${theme.grid};stroke-width:1}
+    ${embeddedFont}
+    text{font-family:'JBMono','Cascadia Code','JetBrains Mono','SFMono-Regular',Consolas,monospace;letter-spacing:0}
+    .title{fill:${theme.ink};font-size:20px;font-weight:760;letter-spacing:2px}.subtitle{fill:${theme.muted};font-size:10px;font-weight:700;letter-spacing:.7px}.hero{fill:url(#hero-gradient);font-size:42px;font-weight:800}.hero-unit{fill:${theme.muted};font-size:11px;letter-spacing:.5px}.hero-label,.eyebrow{fill:${theme.muted};font-size:9px;font-weight:700;letter-spacing:1.05px}
+    .panel{fill:${theme.panel};stroke:${theme.stroke};stroke-width:1}.pill{fill:${theme.panelAlt};stroke:${theme.stroke};stroke-width:1}.panel-label{fill:${theme.ink};font-size:11px;font-weight:780;letter-spacing:1.1px}.stat{fill:${theme.ink};font-size:24px;font-weight:800}.stat-label{fill:${theme.muted};font-size:8.5px;font-weight:700;letter-spacing:.8px}
+    .month{fill:${theme.faint};font-size:7px;font-weight:700;letter-spacing:.45px}.peak{fill:${theme.ink};font-size:8px;font-weight:800}.pin{stroke:${theme.accent};stroke-width:1.15;opacity:.9}.model-name{fill:${theme.ink};font-size:11px;font-weight:720}.model-num,.model-source{fill:${theme.muted};font-size:9.5px;font-weight:700;letter-spacing:.3px}.bar-track{fill:${theme.grid}}.empty{fill:${theme.muted};font-size:10px}.divider{stroke:${theme.grid};stroke-width:1}
     .cube{opacity:1;transform-box:fill-box;transform-origin:center bottom;animation:rise 520ms cubic-bezier(.2,.9,.3,1) both}.callout,.panel-in,.model-row{opacity:1;animation:fade 420ms ease-out both}.callout{animation-delay:1050ms}.panel-in{animation-delay:180ms}.bar{transform-box:fill-box;transform-origin:left center;animation:grow 520ms cubic-bezier(.2,.9,.3,1) both}.model-row{animation-name:fadeUp}
     @keyframes rise{from{opacity:0;transform:translateY(5px) scaleY(.25)}to{opacity:1;transform:none}}@keyframes fade{to{opacity:1}}@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}@media(prefers-reduced-motion:reduce){.cube,.callout,.panel-in,.model-row,.bar{animation:none;opacity:1}}
   </style>
-  <rect width="840" height="608" rx="8" fill="${theme.background}"/>
+  <rect width="840" height="608" rx="8" fill="url(#canvas)"/>
+  <ellipse cx="342" cy="336" rx="320" ry="128" fill="url(#terrain-glow)"/>
+  <ellipse cx="748" cy="170" rx="126" ry="68" fill="${theme.accent}" opacity="${mode === 'dark' ? '.055' : '.035'}" filter="url(#soft-glow)"/>
   <text x="24" y="39" class="title">VIBE CODING STATS</text>
-  <circle cx="29" cy="66" r="5" fill="${theme.claude}"/><text x="41" y="70" class="subtitle">CLAUDE CODE</text>
-  <circle cx="146" cy="66" r="5" fill="${theme.codex}"/><text x="158" y="70" class="subtitle">CODEX CLI &amp; CODEX APP</text>
+  <rect x="24" y="57" width="109" height="20" rx="10" fill="${theme.panel}" stroke="${theme.stroke}"/><circle cx="36" cy="67" r="4.2" fill="${theme.claude}"/><text x="47" y="71" class="subtitle">CLAUDE CODE</text>
+  <rect x="141" y="57" width="174" height="20" rx="10" fill="${theme.panel}" stroke="${theme.stroke}"/><circle cx="153" cy="67" r="4.2" fill="${theme.codex}"/><text x="164" y="71" class="subtitle">CODEX CLI + APP</text>
   <text x="816" y="43" class="hero" text-anchor="end">${compact(total)}<tspan class="hero-unit"> TOKENS</tspan></text>
   <text x="816" y="67" class="hero-label" text-anchor="end">ALL-TIME OBSERVED / @KYC001 / ${updated}</text>
   <text x="24" y="105" class="eyebrow">ROLLING 365-DAY TOKEN TERRAIN / ONE CUBE PER DAY</text>
   <text x="24" y="120" class="hero-label">HEIGHT + BLUE INTENSITY = DAILY TOKEN VOLUME</text>
   <g>${calendar(theme)}</g>
 
-  <g class="panel-in"><rect x="480.5" y="96.5" width="335" height="91" rx="9" class="panel"/>
+  <g class="panel-in" filter="url(#panel-shadow)"><rect x="480.5" y="96.5" width="335" height="91" rx="10" class="panel"/><rect x="481.5" y="97.5" width="333" height="89" rx="9" fill="none" stroke="url(#panel-glow)"/>
     <text x="500" y="136" class="stat">${activeDays}d</text><text x="500" y="158" class="stat-label">ACTIVE DAYS</text>
     <text x="608" y="136" class="stat">${longestStreak}d</text><text x="608" y="158" class="stat-label">LONGEST STREAK</text>
     <text x="718" y="136" class="stat">${totalSessions.toLocaleString('en-US')}</text><text x="718" y="158" class="stat-label">SESSIONS</text>
   </g>
 
-  <g class="panel-in"><rect x="24.5" y="350.5" width="315" height="91" rx="9" class="panel"/>
+  <g class="panel-in" filter="url(#panel-shadow)"><rect x="24.5" y="350.5" width="315" height="91" rx="10" class="panel"/><rect x="25.5" y="351.5" width="313" height="89" rx="9" fill="none" stroke="url(#panel-glow)"/>
     <text x="42" y="389" class="stat" fill="${theme.claude}">${compact(claude.tokens)}</text><text x="42" y="412" class="stat-label">CLAUDE</text>
     <text x="143" y="389" class="stat" fill="${theme.codex}">${compact(codex.tokens)}</text><text x="143" y="412" class="stat-label">CODEX</text>
     <text x="242" y="389" class="stat">${compact(peak?.tokens || 0)}</text><text x="242" y="412" class="stat-label">PEAK DAY</text>
   </g>
   <text x="357" y="386" class="eyebrow">PUBLIC DATA</text><text x="357" y="404" class="hero-label">DAILY + MODEL AGGREGATES ONLY</text><text x="357" y="422" class="hero-label">NO PROMPTS / PATHS / SESSION IDS</text>
 
-  <rect x="24.5" y="456.5" width="791" height="128" rx="9" class="panel"/>
+  <g filter="url(#panel-shadow)"><rect x="24.5" y="456.5" width="791" height="128" rx="10" class="panel"/><rect x="25.5" y="457.5" width="789" height="126" rx="9" fill="none" stroke="url(#panel-glow)"/></g>
   <text x="40" y="480" class="panel-label">TOP MODELS</text>
   <text x="404" y="480" class="hero-label" text-anchor="end">TOKENS</text><text x="492" y="480" class="hero-label" text-anchor="end">CACHE</text><text x="520" y="480" class="hero-label">RELATIVE VOLUME</text><text x="800" y="480" class="hero-label" text-anchor="end">SOURCE</text>
   <line x1="40" y1="488" x2="800" y2="488" class="divider"/>
