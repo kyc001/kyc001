@@ -22,7 +22,7 @@
   <text x="132" y="71" class="subtitle">x</text>
   <circle cx="153" cy="66" r="5" fill="#0FA3B1"/><text x="166" y="71" class="subtitle">CODEX CLI · @kyc001</text>
   <text x="816" y="54" class="hero" text-anchor="end">8.03B tokens</text>
-  <text x="816" y="74" class="hero-label" text-anchor="end">ALL-TIME TOTAL · 2026-07-16</text>
+  <text x="816" y="74" class="hero-label" text-anchor="end">累计用量 · 2026-07-16</text>
   <g><g class="cube" style="animation-delay:18ms">
     <polygon points="201.15,158.55 206.35,161.55 201.15,164.55 195.95000000000002,161.55" fill="#161B22"/>
     <polygon points="206.35,161.55 206.35,164.15 201.15,167.15 201.15,164.55" fill="#10151B"/>
@@ -1488,19 +1488,19 @@
       <text x="561.6999999999999" y="319.15000000000003" text-anchor="middle" class="peak">2.07B / 07-13</text></g></g>
 
   <g class="panel-in"><rect x="480.5" y="96.5" width="335" height="91" rx="10" class="panel"/><rect x="481.5" y="97.5" width="333" height="89" rx="9" fill="none" stroke="url(#panel-glow)"/>
-    <text x="500" y="136" class="stat">104d</text><text x="500" y="158" class="stat-label">ACTIVE DAYS</text>
-    <text x="608" y="136" class="stat">26d</text><text x="608" y="158" class="stat-label">LONGEST STREAK</text>
-    <text x="718" y="136" class="stat">340</text><text x="718" y="158" class="stat-label">SESSIONS</text>
+    <text x="500" y="136" class="stat">104天</text><text x="500" y="158" class="stat-label">活跃天数</text>
+    <text x="608" y="136" class="stat">26天</text><text x="608" y="158" class="stat-label">最长连续</text>
+    <text x="718" y="136" class="stat">340</text><text x="718" y="158" class="stat-label">会话总数</text>
   </g>
 
   <g class="panel-in"><rect x="24.5" y="350.5" width="315" height="91" rx="10" class="panel"/><rect x="25.5" y="351.5" width="313" height="89" rx="9" fill="none" stroke="url(#panel-glow)"/>
     <text x="42" y="389" class="stat" fill="#C4633F">709M</text><text x="42" y="412" class="stat-label">CLAUDE</text>
     <text x="143" y="389" class="stat" fill="#0FA3B1">7.32B</text><text x="143" y="412" class="stat-label">CODEX</text>
-    <text x="242" y="389" class="stat">2.07B</text><text x="242" y="412" class="stat-label">PEAK DAY</text>
+    <text x="242" y="389" class="stat">2.07B</text><text x="242" y="412" class="stat-label">单日峰值</text>
   </g>
   <g><rect x="24.5" y="454.5" width="791" height="139" rx="12" class="panel"/><rect x="25.5" y="455.5" width="789" height="137" rx="11" fill="none" stroke="url(#panel-glow)"/></g>
-  <text x="40" y="480" class="panel-label">TOP MODELS</text>
-  <text x="404" y="480" class="hero-label" text-anchor="end">TOKENS</text><text x="492" y="480" class="hero-label" text-anchor="end">CACHE</text><text x="520" y="480" class="hero-label">RELATIVE VOLUME</text><text x="800" y="480" class="hero-label" text-anchor="end">SOURCE</text>
+  <text x="40" y="480" class="panel-label">热门模型</text>
+  <text x="404" y="480" class="hero-label" text-anchor="end">TOKENS</text><text x="492" y="480" class="hero-label" text-anchor="end">缓存</text><text x="520" y="480" class="hero-label">相对用量</text><text x="800" y="480" class="hero-label" text-anchor="end">来源</text>
   <line x1="40" y1="488" x2="800" y2="488" class="divider"/>
   <g class="model-row" style="animation-delay:1200ms">
       <circle cx="40" cy="497" r="4.5" fill="#0FA3B1"/>
@@ -1543,6 +1543,6 @@
       <rect x="520" y="570" width="13" height="6" rx="3" fill="#0FA3B1" class="bar"/>
       <text x="800" y="577" class="model-source" text-anchor="end">CODEX</text>
     </g>
-  <text x="24" y="602" class="eyebrow">365 DAYS / 1 DEVICE / LOCAL AGGREGATES / LIVE SVG</text>
+  <text x="24" y="602" class="eyebrow">365 天 / 1 台设备 / 本地聚合 / 实时 SVG</text>
   <text x="816" y="602" class="eyebrow" text-anchor="end">KYC001</text>
   </svg>

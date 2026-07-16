@@ -142,7 +142,7 @@ function calendar(theme) {
 
 function modelRows(theme) {
   const models = data.models.slice(0, 5);
-  if (!models.length) return `<text x="42" y="528" class="empty">NO LOCAL USAGE DATA YET</text>`;
+  if (!models.length) return `<text x="42" y="528" class="empty">暂无本地使用数据</text>`;
   const max = Math.max(...models.map((model) => model.tokens), 1);
   return models.map((model, index) => {
     const y = 501 + index * 19;
@@ -190,26 +190,26 @@ function render(mode) {
   <text x="132" y="71" class="subtitle">x</text>
   <circle cx="153" cy="66" r="5" fill="${theme.codex}"/><text x="166" y="71" class="subtitle">CODEX CLI · @kyc001</text>
   <text x="816" y="54" class="hero" text-anchor="end">${compact(total)} tokens</text>
-  <text x="816" y="74" class="hero-label" text-anchor="end">ALL-TIME TOTAL · ${updated}</text>
+  <text x="816" y="74" class="hero-label" text-anchor="end">累计用量 · ${updated}</text>
   <g>${calendar(theme)}</g>
 
   <g class="panel-in"><rect x="480.5" y="96.5" width="335" height="91" rx="10" class="panel"/><rect x="481.5" y="97.5" width="333" height="89" rx="9" fill="none" stroke="url(#panel-glow)"/>
-    <text x="500" y="136" class="stat">${activeDays}d</text><text x="500" y="158" class="stat-label">ACTIVE DAYS</text>
-    <text x="608" y="136" class="stat">${longestStreak}d</text><text x="608" y="158" class="stat-label">LONGEST STREAK</text>
-    <text x="718" y="136" class="stat">${totalSessions.toLocaleString('en-US')}</text><text x="718" y="158" class="stat-label">SESSIONS</text>
+    <text x="500" y="136" class="stat">${activeDays}天</text><text x="500" y="158" class="stat-label">活跃天数</text>
+    <text x="608" y="136" class="stat">${longestStreak}天</text><text x="608" y="158" class="stat-label">最长连续</text>
+    <text x="718" y="136" class="stat">${totalSessions.toLocaleString('en-US')}</text><text x="718" y="158" class="stat-label">会话总数</text>
   </g>
 
   <g class="panel-in"><rect x="24.5" y="350.5" width="315" height="91" rx="10" class="panel"/><rect x="25.5" y="351.5" width="313" height="89" rx="9" fill="none" stroke="url(#panel-glow)"/>
     <text x="42" y="389" class="stat" fill="${theme.claude}">${compact(claude.tokens)}</text><text x="42" y="412" class="stat-label">CLAUDE</text>
     <text x="143" y="389" class="stat" fill="${theme.codex}">${compact(codex.tokens)}</text><text x="143" y="412" class="stat-label">CODEX</text>
-    <text x="242" y="389" class="stat">${compact(peak?.tokens || 0)}</text><text x="242" y="412" class="stat-label">PEAK DAY</text>
+    <text x="242" y="389" class="stat">${compact(peak?.tokens || 0)}</text><text x="242" y="412" class="stat-label">单日峰值</text>
   </g>
   <g><rect x="24.5" y="454.5" width="791" height="139" rx="12" class="panel"/><rect x="25.5" y="455.5" width="789" height="137" rx="11" fill="none" stroke="url(#panel-glow)"/></g>
-  <text x="40" y="480" class="panel-label">TOP MODELS</text>
-  <text x="404" y="480" class="hero-label" text-anchor="end">TOKENS</text><text x="492" y="480" class="hero-label" text-anchor="end">CACHE</text><text x="520" y="480" class="hero-label">RELATIVE VOLUME</text><text x="800" y="480" class="hero-label" text-anchor="end">SOURCE</text>
+  <text x="40" y="480" class="panel-label">热门模型</text>
+  <text x="404" y="480" class="hero-label" text-anchor="end">TOKENS</text><text x="492" y="480" class="hero-label" text-anchor="end">缓存</text><text x="520" y="480" class="hero-label">相对用量</text><text x="800" y="480" class="hero-label" text-anchor="end">来源</text>
   <line x1="40" y1="488" x2="800" y2="488" class="divider"/>
   ${modelRows(theme)}
-  <text x="24" y="602" class="eyebrow">365 DAYS / ${data.devices.length} DEVICE${data.devices.length === 1 ? '' : 'S'} / LOCAL AGGREGATES / LIVE SVG</text>
+  <text x="24" y="602" class="eyebrow">365 天 / ${data.devices.length} 台设备 / 本地聚合 / 实时 SVG</text>
   <text x="816" y="602" class="eyebrow" text-anchor="end">KYC001</text>
   </svg>`;
 }
