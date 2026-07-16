@@ -79,8 +79,9 @@ function coords(day) {
   const week = Math.floor((firstWeekday + day.index) / 7);
   return {
     week,
-    x: 48 + week * 7.15 + day.weekday * 4.1,
-    y: 190 + week * 2.7 - day.weekday * 2.35,
+    // The reference workbench uses this descending isometric calendar plane.
+    x: 194 + week * 7.15 - day.weekday * 4.1,
+    y: 157 + week * 4.15 + day.weekday * 2.35,
   };
 }
 
@@ -88,9 +89,9 @@ function cube(theme, day, maxTokens) {
   const { x, y, week } = coords(day);
   const ratio = day.tokens ? day.tokens / maxTokens : 0;
   const intensity = Math.sqrt(ratio);
-  const height = day.tokens ? 5 + Math.round(intensity * 24) : 2.2;
-  const width = 4.1;
-  const depth = 2.1;
+  const height = day.tokens ? 6 + Math.round(intensity * 38) : 2.6;
+  const width = 5.2;
+  const depth = 3;
   const topY = y - height;
   const top = day.tokens ? mix(theme.lowTop, theme.highTop, intensity) : theme.dormantTop;
   const right = day.tokens ? mix(theme.lowRight, theme.highRight, intensity) : theme.dormantRight;
@@ -131,7 +132,11 @@ function calendar(theme) {
       <rect x="${x - 43}" y="${topY - 39}" width="86" height="18" rx="9" class="pill"/>
       <text x="${x}" y="${topY - 27}" text-anchor="middle" class="peak">${compact(peak.tokens)} / ${peak.date.slice(5)}</text></g>`;
   }
-  const monthLabels = labels.map((label) => `<text x="${48 + label.week * 7.15}" y="340" class="month">${label.text}</text>`).join('');
+  const monthLabels = labels.map((label) => {
+    const day = days.find((item) => Math.floor((days[0].weekday + item.index) / 7) === label.week);
+    const position = day ? coords(day) : { x: 194 + label.week * 7.15, y: 157 + label.week * 4.15 };
+    return `<text x="${position.x}" y="${position.y + 24}" class="month" text-anchor="end">${label.text}</text>`;
+  }).join('');
   return `${cubes}${monthLabels}${callout}`;
 }
 
@@ -173,39 +178,33 @@ function render(mode) {
   </defs>
   <style>
     ${embeddedFont}
-    text{font-family:'JBMono','Cascadia Code','JetBrains Mono','SFMono-Regular',Consolas,monospace;letter-spacing:0}
-    .title{fill:${theme.ink};font-size:20px;font-weight:760;letter-spacing:2px}.subtitle{fill:${theme.muted};font-size:10px;font-weight:700;letter-spacing:.7px}.hero{fill:url(#hero-gradient);font-size:42px;font-weight:800}.hero-unit{fill:${theme.muted};font-size:11px;letter-spacing:.5px}.hero-label,.eyebrow{fill:${theme.muted};font-size:9px;font-weight:700;letter-spacing:1.05px}
-    .panel{fill:${theme.panel};stroke:${theme.stroke};stroke-width:1}.pill{fill:${theme.panelAlt};stroke:${theme.stroke};stroke-width:1}.panel-label{fill:${theme.ink};font-size:11px;font-weight:780;letter-spacing:1.1px}.stat{fill:${theme.ink};font-size:24px;font-weight:800}.stat-label{fill:${theme.muted};font-size:8.5px;font-weight:700;letter-spacing:.8px}
-    .month{fill:${theme.faint};font-size:7px;font-weight:700;letter-spacing:.45px}.peak{fill:${theme.ink};font-size:8px;font-weight:800}.pin{stroke:${theme.accent};stroke-width:1.15;opacity:.9}.model-name{fill:${theme.ink};font-size:11px;font-weight:720}.model-num,.model-source{fill:${theme.muted};font-size:9.5px;font-weight:700;letter-spacing:.3px}.bar-track{fill:${theme.grid}}.empty{fill:${theme.muted};font-size:10px}.divider{stroke:${theme.grid};stroke-width:1}
-    .cube{opacity:1;transform-box:fill-box;transform-origin:center bottom;animation:rise 520ms cubic-bezier(.2,.9,.3,1) both}.callout,.panel-in,.model-row{opacity:1;animation:fade 420ms ease-out both}.callout{animation-delay:1050ms}.panel-in{animation-delay:180ms}.bar{transform-box:fill-box;transform-origin:left center;animation:grow 520ms cubic-bezier(.2,.9,.3,1) both}.model-row{animation-name:fadeUp}
-    @keyframes rise{from{opacity:0;transform:translateY(5px) scaleY(.25)}to{opacity:1;transform:none}}@keyframes fade{to{opacity:1}}@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}@media(prefers-reduced-motion:reduce){.cube,.callout,.panel-in,.model-row,.bar{animation:none;opacity:1}}
+    text{font-family:'Segoe UI',Ubuntu,Helvetica,Arial,sans-serif;letter-spacing:0}
+    .title{fill:${theme.ink};font-family:'JBMono','JetBrains Mono',ui-monospace,monospace;font-size:20px;font-weight:700;letter-spacing:1.4px}.subtitle{fill:${theme.muted};font-family:'JBMono','JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:500}.hero{fill:url(#hero-gradient);font-family:'JBMono','JetBrains Mono',ui-monospace,monospace;font-size:40px;font-weight:700}.hero-unit{font-size:40px}.hero-label{fill:${theme.muted};font-size:12px;letter-spacing:.8px}.eyebrow{fill:${theme.muted};font-size:12px;letter-spacing:.8px}
+    .panel{fill:${theme.panel};stroke:${theme.stroke};stroke-width:1}.pill{fill:${theme.panelAlt};stroke:${theme.stroke};stroke-width:1}.panel-label{fill:${theme.muted};font-size:13px;font-weight:600;letter-spacing:.8px}.stat{fill:${theme.ink};font-family:'JBMono','JetBrains Mono',ui-monospace,monospace;font-size:24px;font-weight:700}.stat-label{fill:${theme.muted};font-size:12px;font-weight:500;letter-spacing:.8px}
+    .month{fill:${theme.faint};font-size:12px}.peak{fill:${theme.ink};font-family:'JBMono','JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:500}.pin{stroke:${theme.muted};stroke-width:1.5;opacity:.9}.model-name{fill:${theme.ink};font-family:'JBMono','JetBrains Mono',ui-monospace,monospace;font-size:14px;font-weight:700}.model-num,.model-source{fill:${theme.muted};font-family:'JBMono','JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:500}.bar-track{fill:${theme.grid}}.empty{fill:${theme.muted};font-size:12px}.divider{stroke:${theme.grid};stroke-width:1}
+    .cube,.callout,.panel-in,.model-row,.bar{opacity:1}
   </style>
-  <rect width="840" height="608" rx="8" fill="url(#canvas)"/>
-  <ellipse cx="342" cy="336" rx="320" ry="128" fill="url(#terrain-glow)"/>
-  <ellipse cx="748" cy="170" rx="126" ry="68" fill="${theme.accent}" opacity="${mode === 'dark' ? '.055' : '.035'}" filter="url(#soft-glow)"/>
-  <text x="24" y="39" class="title">VIBE CODING STATS</text>
-  <rect x="24" y="57" width="109" height="20" rx="10" fill="${theme.panel}" stroke="${theme.stroke}"/><circle cx="36" cy="67" r="4.2" fill="${theme.claude}"/><text x="47" y="71" class="subtitle">CLAUDE CODE</text>
-  <rect x="141" y="57" width="174" height="20" rx="10" fill="${theme.panel}" stroke="${theme.stroke}"/><circle cx="153" cy="67" r="4.2" fill="${theme.codex}"/><text x="164" y="71" class="subtitle">CODEX CLI + APP</text>
-  <text x="816" y="43" class="hero" text-anchor="end">${compact(total)}<tspan class="hero-unit"> TOKENS</tspan></text>
-  <text x="816" y="67" class="hero-label" text-anchor="end">ALL-TIME OBSERVED / @KYC001 / ${updated}</text>
-  <text x="24" y="105" class="eyebrow">ROLLING 365-DAY TOKEN TERRAIN / ONE CUBE PER DAY</text>
-  <text x="24" y="120" class="hero-label">HEIGHT + BLUE INTENSITY = DAILY TOKEN VOLUME</text>
+  <rect width="840" height="608" rx="8" fill="${theme.background}"/>
+  <text x="24" y="50" class="title">VIBE CODING STATS</text>
+  <circle cx="31" cy="66" r="5" fill="${theme.claude}"/><text x="43" y="71" class="subtitle">CLAUDE CODE</text>
+  <text x="132" y="71" class="subtitle">x</text>
+  <circle cx="153" cy="66" r="5" fill="${theme.codex}"/><text x="166" y="71" class="subtitle">CODEX CLI · @kyc001</text>
+  <text x="816" y="54" class="hero" text-anchor="end">${compact(total)} tokens</text>
+  <text x="816" y="74" class="hero-label" text-anchor="end">ALL-TIME TOTAL · ${updated}</text>
   <g>${calendar(theme)}</g>
 
-  <g class="panel-in" filter="url(#panel-shadow)"><rect x="480.5" y="96.5" width="335" height="91" rx="10" class="panel"/><rect x="481.5" y="97.5" width="333" height="89" rx="9" fill="none" stroke="url(#panel-glow)"/>
+  <g class="panel-in"><rect x="480.5" y="96.5" width="335" height="91" rx="10" class="panel"/><rect x="481.5" y="97.5" width="333" height="89" rx="9" fill="none" stroke="url(#panel-glow)"/>
     <text x="500" y="136" class="stat">${activeDays}d</text><text x="500" y="158" class="stat-label">ACTIVE DAYS</text>
     <text x="608" y="136" class="stat">${longestStreak}d</text><text x="608" y="158" class="stat-label">LONGEST STREAK</text>
     <text x="718" y="136" class="stat">${totalSessions.toLocaleString('en-US')}</text><text x="718" y="158" class="stat-label">SESSIONS</text>
   </g>
 
-  <g class="panel-in" filter="url(#panel-shadow)"><rect x="24.5" y="350.5" width="315" height="91" rx="10" class="panel"/><rect x="25.5" y="351.5" width="313" height="89" rx="9" fill="none" stroke="url(#panel-glow)"/>
+  <g class="panel-in"><rect x="24.5" y="350.5" width="315" height="91" rx="10" class="panel"/><rect x="25.5" y="351.5" width="313" height="89" rx="9" fill="none" stroke="url(#panel-glow)"/>
     <text x="42" y="389" class="stat" fill="${theme.claude}">${compact(claude.tokens)}</text><text x="42" y="412" class="stat-label">CLAUDE</text>
     <text x="143" y="389" class="stat" fill="${theme.codex}">${compact(codex.tokens)}</text><text x="143" y="412" class="stat-label">CODEX</text>
     <text x="242" y="389" class="stat">${compact(peak?.tokens || 0)}</text><text x="242" y="412" class="stat-label">PEAK DAY</text>
   </g>
-  <text x="357" y="386" class="eyebrow">PUBLIC DATA</text><text x="357" y="404" class="hero-label">DAILY + MODEL AGGREGATES ONLY</text><text x="357" y="422" class="hero-label">NO PROMPTS / PATHS / SESSION IDS</text>
-
-  <g filter="url(#panel-shadow)"><rect x="24.5" y="456.5" width="791" height="128" rx="10" class="panel"/><rect x="25.5" y="457.5" width="789" height="126" rx="9" fill="none" stroke="url(#panel-glow)"/></g>
+  <g><rect x="24.5" y="454.5" width="791" height="139" rx="12" class="panel"/><rect x="25.5" y="455.5" width="789" height="137" rx="11" fill="none" stroke="url(#panel-glow)"/></g>
   <text x="40" y="480" class="panel-label">TOP MODELS</text>
   <text x="404" y="480" class="hero-label" text-anchor="end">TOKENS</text><text x="492" y="480" class="hero-label" text-anchor="end">CACHE</text><text x="520" y="480" class="hero-label">RELATIVE VOLUME</text><text x="800" y="480" class="hero-label" text-anchor="end">SOURCE</text>
   <line x1="40" y1="488" x2="800" y2="488" class="divider"/>
