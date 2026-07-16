@@ -1,0 +1,210 @@
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+
+const data = JSON.parse(readFileSync('data/usage.json', 'utf8'));
+const total = data.models.reduce((sum, model) => sum + model.tokens, 0);
+const totalSessions = data.sources.reduce((sum, source) => sum + source.sessions, 0);
+const end = new Date(data.updatedAt || Date.now());
+end.setUTCHours(0, 0, 0, 0);
+const start = new Date(end);
+start.setUTCDate(start.getUTCDate() - 364);
+const observed = new Map(data.days.map((day) => [day.date, day]));
+const days = [];
+
+for (let index = 0; index < 365; index += 1) {
+  const date = new Date(start);
+  date.setUTCDate(start.getUTCDate() + index);
+  const key = date.toISOString().slice(0, 10);
+  const usage = observed.get(key) || { tokens: 0, sources: {} };
+  days.push({
+    index,
+    date: key,
+    weekday: date.getUTCDay(),
+    tokens: Number(usage.tokens || 0),
+    sources: usage.sources || {},
+  });
+}
+
+const activeDays = days.filter((day) => day.tokens > 0).length;
+let longestStreak = 0;
+let currentStreak = 0;
+for (const day of days) {
+  currentStreak = day.tokens > 0 ? currentStreak + 1 : 0;
+  longestStreak = Math.max(longestStreak, currentStreak);
+}
+const peak = days.reduce((best, day) => day.tokens > best.tokens ? day : best, days[0]);
+const sourceTotals = new Map(data.sources.map((source) => [source.name, source]));
+
+const themes = {
+  dark: {
+    background: '#0D1117', panel: '#161B22', panelAlt: '#0F141B', ink: '#E6EDF3', muted: '#8B949E', faint: '#656D76',
+    stroke: '#30363D', grid: '#21262D', dormantTop: '#161B22', dormantRight: '#10151B', dormantLeft: '#0C1117',
+    lowTop: '#0D419D', highTop: '#96CDFF', lowRight: '#0B3784', highRight: '#7EACD6', lowLeft: '#092E6E', highLeft: '#6990B2',
+    accent: '#58A6FF', accentSoft: '#388BFD', claude: '#C4633F', codex: '#0FA3B1',
+  },
+  light: {
+    background: '#FFFFFF', panel: '#F6F8FA', panelAlt: '#FFFFFF', ink: '#1F2328', muted: '#59636E', faint: '#818B98',
+    stroke: '#D0D7DE', grid: '#D8DEE4', dormantTop: '#EBEFF3', dormantRight: '#DDE3E9', dormantLeft: '#D2D9E0',
+    lowTop: '#B6D7FF', highTop: '#0969DA', lowRight: '#8FC2FF', highRight: '#0550AE', lowLeft: '#6EAEFA', highLeft: '#033D8B',
+    accent: '#0969DA', accentSoft: '#218BFF', claude: '#A94E31', codex: '#087F8C',
+  },
+};
+
+function compact(value) {
+  const number = Number(value || 0);
+  if (number >= 1e9) return `${(number / 1e9).toFixed(number >= 1e10 ? 1 : 2).replace(/\.0$/, '')}B`;
+  if (number >= 1e6) return `${(number / 1e6).toFixed(number >= 1e8 ? 0 : 1).replace(/\.0$/, '')}M`;
+  if (number >= 1e3) return `${(number / 1e3).toFixed(number >= 1e5 ? 0 : 1).replace(/\.0$/, '')}K`;
+  return number.toLocaleString('en-US');
+}
+
+function safe(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;',
+  })[character]);
+}
+
+function hex(value) {
+  return value.match(/[a-f\d]{2}/gi).map((part) => Number.parseInt(part, 16));
+}
+
+function mix(from, to, amount) {
+  const left = hex(from);
+  const right = hex(to);
+  return `#${left.map((value, index) => Math.round(value + (right[index] - value) * amount).toString(16).padStart(2, '0')).join('')}`;
+}
+
+function coords(day) {
+  const firstWeekday = days[0].weekday;
+  const week = Math.floor((firstWeekday + day.index) / 7);
+  return {
+    week,
+    x: 48 + week * 7.15 + day.weekday * 4.1,
+    y: 190 + week * 2.7 - day.weekday * 2.35,
+  };
+}
+
+function cube(theme, day, maxTokens) {
+  const { x, y, week } = coords(day);
+  const ratio = day.tokens ? day.tokens / maxTokens : 0;
+  const intensity = Math.sqrt(ratio);
+  const height = day.tokens ? 5 + Math.round(intensity * 24) : 2.2;
+  const width = 4.1;
+  const depth = 2.1;
+  const topY = y - height;
+  const top = day.tokens ? mix(theme.lowTop, theme.highTop, intensity) : theme.dormantTop;
+  const right = day.tokens ? mix(theme.lowRight, theme.highRight, intensity) : theme.dormantRight;
+  const left = day.tokens ? mix(theme.lowLeft, theme.highLeft, intensity) : theme.dormantLeft;
+  return `<g class="cube" style="animation-delay:${(week * 18 + day.weekday * 4)}ms">
+    <polygon points="${x},${topY} ${x + width},${topY + depth} ${x},${topY + depth * 2} ${x - width},${topY + depth}" fill="${top}"/>
+    <polygon points="${x + width},${topY + depth} ${x + width},${y + depth} ${x},${y + depth * 2} ${x},${topY + depth * 2}" fill="${right}"/>
+    <polygon points="${x},${topY + depth * 2} ${x},${y + depth * 2} ${x - width},${y + depth} ${x - width},${topY + depth}" fill="${left}"/>
+  </g>`;
+}
+
+function calendar(theme) {
+  const maxTokens = Math.max(1, ...days.map((day) => day.tokens));
+  const cubes = [...days]
+    .sort((a, b) => coords(a).y - coords(b).y || coords(a).x - coords(b).x)
+    .map((day) => cube(theme, day, maxTokens))
+    .join('');
+  const labels = [];
+  let month = -1;
+  for (const day of days) {
+    const date = new Date(`${day.date}T00:00:00Z`);
+    if (date.getUTCMonth() === month) continue;
+    month = date.getUTCMonth();
+    const { week } = coords(day);
+    const label = {
+      week,
+      text: date.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' }).toUpperCase(),
+    };
+    if (labels.length && week - labels.at(-1).week < 3) labels[labels.length - 1] = label;
+    else labels.push(label);
+  }
+  let callout = '';
+  if (peak?.tokens) {
+    const { x, y } = coords(peak);
+    const intensity = Math.sqrt(peak.tokens / maxTokens);
+    const topY = y - 5 - Math.round(intensity * 24);
+    callout = `<g class="callout"><line x1="${x}" y1="${topY - 2}" x2="${x}" y2="${topY - 22}" class="pin"/>
+      <rect x="${x - 43}" y="${topY - 39}" width="86" height="18" rx="9" class="pill"/>
+      <text x="${x}" y="${topY - 27}" text-anchor="middle" class="peak">${compact(peak.tokens)} / ${peak.date.slice(5)}</text></g>`;
+  }
+  const monthLabels = labels.map((label) => `<text x="${48 + label.week * 7.15}" y="340" class="month">${label.text}</text>`).join('');
+  return `${cubes}${monthLabels}${callout}`;
+}
+
+function modelRows(theme) {
+  const models = data.models.slice(0, 5);
+  if (!models.length) return `<text x="42" y="528" class="empty">NO LOCAL USAGE DATA YET</text>`;
+  const max = Math.max(...models.map((model) => model.tokens), 1);
+  return models.map((model, index) => {
+    const y = 501 + index * 19;
+    const sourceColor = model.source === 'claude' ? theme.claude : theme.codex;
+    const cache = model.inputTokens ? model.cachedTokens / model.inputTokens * 100 : 0;
+    const width = Math.max(3, Math.round(168 * model.tokens / max));
+    return `<g class="model-row" style="animation-delay:${1200 + index * 90}ms">
+      <circle cx="40" cy="${y - 4}" r="4.5" fill="${sourceColor}"/>
+      <text x="52" y="${y}" class="model-name">${safe(model.name)}</text>
+      <text x="404" y="${y}" class="model-num" text-anchor="end">${compact(model.tokens)}</text>
+      <text x="492" y="${y}" class="model-num" text-anchor="end">${cache.toFixed(cache >= 10 ? 0 : 1)}%</text>
+      <rect x="520" y="${y - 7}" width="168" height="6" rx="3" class="bar-track"/>
+      <rect x="520" y="${y - 7}" width="${width}" height="6" rx="3" fill="${sourceColor}" class="bar"/>
+      <text x="800" y="${y}" class="model-source" text-anchor="end">${model.source.toUpperCase()}</text>
+    </g>`;
+  }).join('');
+}
+
+function render(mode) {
+  const theme = themes[mode];
+  const updated = String(data.updatedAt || '').slice(0, 10) || 'SYNC PENDING';
+  const codex = sourceTotals.get('codex') || { tokens: 0, sessions: 0 };
+  const claude = sourceTotals.get('claude') || { tokens: 0, sessions: 0 };
+  const label = `kyc001 vibe coding stats: ${compact(total)} tokens across ${activeDays} active days`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="840" height="608" viewBox="0 0 840 608" role="img" aria-label="${safe(label)}">
+  <style>
+    text{font-family:'Cascadia Code','JetBrains Mono','SFMono-Regular',Consolas,monospace;letter-spacing:0}
+    .title{fill:${theme.ink};font-size:20px;font-weight:700;letter-spacing:1.4px}.subtitle{fill:${theme.muted};font-size:11px;font-weight:600}.hero{fill:${theme.accent};font-size:39px;font-weight:750}.hero-unit{fill:${theme.muted};font-size:12px}.hero-label,.eyebrow{fill:${theme.muted};font-size:9px;font-weight:650;letter-spacing:.8px}
+    .panel,.pill{fill:${theme.panel};stroke:${theme.stroke};stroke-width:1}.panel-label{fill:${theme.muted};font-size:11px;font-weight:700;letter-spacing:.8px}.stat{fill:${theme.ink};font-size:23px;font-weight:730}.stat-label{fill:${theme.muted};font-size:9px;font-weight:650;letter-spacing:.55px}
+    .month{fill:${theme.faint};font-size:7px;font-weight:650}.peak{fill:${theme.ink};font-size:8px;font-weight:700}.pin{stroke:${theme.accent};stroke-width:1;opacity:.8}.model-name{fill:${theme.ink};font-size:11px;font-weight:650}.model-num,.model-source{fill:${theme.muted};font-size:10px;font-weight:600}.bar-track{fill:${theme.grid}}.empty{fill:${theme.muted};font-size:10px}.divider{stroke:${theme.grid};stroke-width:1}
+    .cube{opacity:1;transform-box:fill-box;transform-origin:center bottom;animation:rise 520ms cubic-bezier(.2,.9,.3,1) both}.callout,.panel-in,.model-row{opacity:1;animation:fade 420ms ease-out both}.callout{animation-delay:1050ms}.panel-in{animation-delay:180ms}.bar{transform-box:fill-box;transform-origin:left center;animation:grow 520ms cubic-bezier(.2,.9,.3,1) both}.model-row{animation-name:fadeUp}
+    @keyframes rise{from{opacity:0;transform:translateY(5px) scaleY(.25)}to{opacity:1;transform:none}}@keyframes fade{to{opacity:1}}@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}@media(prefers-reduced-motion:reduce){.cube,.callout,.panel-in,.model-row,.bar{animation:none;opacity:1}}
+  </style>
+  <rect width="840" height="608" rx="8" fill="${theme.background}"/>
+  <text x="24" y="39" class="title">VIBE CODING STATS</text>
+  <circle cx="29" cy="66" r="5" fill="${theme.claude}"/><text x="41" y="70" class="subtitle">CLAUDE CODE</text>
+  <circle cx="146" cy="66" r="5" fill="${theme.codex}"/><text x="158" y="70" class="subtitle">CODEX CLI &amp; CODEX APP</text>
+  <text x="816" y="43" class="hero" text-anchor="end">${compact(total)}<tspan class="hero-unit"> TOKENS</tspan></text>
+  <text x="816" y="67" class="hero-label" text-anchor="end">ALL-TIME OBSERVED / @KYC001 / ${updated}</text>
+  <text x="24" y="105" class="eyebrow">ROLLING 365-DAY TOKEN TERRAIN / ONE CUBE PER DAY</text>
+  <text x="24" y="120" class="hero-label">HEIGHT + BLUE INTENSITY = DAILY TOKEN VOLUME</text>
+  <g>${calendar(theme)}</g>
+
+  <g class="panel-in"><rect x="480.5" y="96.5" width="335" height="91" rx="9" class="panel"/>
+    <text x="500" y="136" class="stat">${activeDays}d</text><text x="500" y="158" class="stat-label">ACTIVE DAYS</text>
+    <text x="608" y="136" class="stat">${longestStreak}d</text><text x="608" y="158" class="stat-label">LONGEST STREAK</text>
+    <text x="718" y="136" class="stat">${totalSessions.toLocaleString('en-US')}</text><text x="718" y="158" class="stat-label">SESSIONS</text>
+  </g>
+
+  <g class="panel-in"><rect x="24.5" y="350.5" width="315" height="91" rx="9" class="panel"/>
+    <text x="42" y="389" class="stat" fill="${theme.claude}">${compact(claude.tokens)}</text><text x="42" y="412" class="stat-label">CLAUDE</text>
+    <text x="143" y="389" class="stat" fill="${theme.codex}">${compact(codex.tokens)}</text><text x="143" y="412" class="stat-label">CODEX</text>
+    <text x="242" y="389" class="stat">${compact(peak?.tokens || 0)}</text><text x="242" y="412" class="stat-label">PEAK DAY</text>
+  </g>
+  <text x="357" y="386" class="eyebrow">PUBLIC DATA</text><text x="357" y="404" class="hero-label">DAILY + MODEL AGGREGATES ONLY</text><text x="357" y="422" class="hero-label">NO PROMPTS / PATHS / SESSION IDS</text>
+
+  <rect x="24.5" y="456.5" width="791" height="128" rx="9" class="panel"/>
+  <text x="40" y="480" class="panel-label">TOP MODELS</text>
+  <text x="404" y="480" class="hero-label" text-anchor="end">TOKENS</text><text x="492" y="480" class="hero-label" text-anchor="end">CACHE</text><text x="520" y="480" class="hero-label">RELATIVE VOLUME</text><text x="800" y="480" class="hero-label" text-anchor="end">SOURCE</text>
+  <line x1="40" y1="488" x2="800" y2="488" class="divider"/>
+  ${modelRows(theme)}
+  <text x="24" y="602" class="eyebrow">365 DAYS / ${data.devices.length} DEVICE${data.devices.length === 1 ? '' : 'S'} / LOCAL AGGREGATES / LIVE SVG</text>
+  <text x="816" y="602" class="eyebrow" text-anchor="end">KYC001</text>
+  </svg>`;
+}
+
+mkdirSync('assets', { recursive: true });
+for (const mode of ['dark', 'light']) {
+  writeFileSync(`assets/ai-workbench-${mode}.svg`, render(mode).replace(/[ \t]+$/gm, ''));
+}
+console.log(`Rendered kyc001 AI workbench: ${compact(total)} tokens, ${activeDays} active days, ${totalSessions} sessions.`);

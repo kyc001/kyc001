@@ -14,6 +14,18 @@ My current interests include:
 
 [Blog](https://kyc001.github.io/) · [Email](mailto:keyunchao001@gmail.com) · [GitHub](https://github.com/kyc001)
 
+## AI Workbench
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/ai-workbench-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="./assets/ai-workbench-light.svg">
+    <img alt="kyc001 Codex and Claude Code usage workbench" src="./assets/ai-workbench-dark.svg" width="840">
+  </picture>
+</p>
+
+Aggregated local Codex and Claude Code usage. No prompts, responses, project paths, session IDs, or credentials are published. [Setup and data semantics](./SETUP.md).
+
 ## Selected Work
 
 | Project | What I built |

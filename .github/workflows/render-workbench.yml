@@ -1,0 +1,31 @@
+name: Render AI workbench
+
+on:
+  push:
+    paths:
+      - data/devices/**
+      - scripts/aggregate-usage.mjs
+      - scripts/render-workbench.mjs
+      - package.json
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: render-ai-workbench
+  cancel-in-progress: true
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm run build
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: render AI workbench"
+          file_pattern: "data/usage.json assets/ai-workbench-dark.svg assets/ai-workbench-light.svg"

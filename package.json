@@ -1,0 +1,12 @@
+{
+  "name": "kyc001-profile",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "aggregate": "node scripts/aggregate-usage.mjs",
+    "build": "npm run aggregate && npm run render",
+    "collect": "node scripts/collect-usage.mjs",
+    "render": "node scripts/render-workbench.mjs",
+    "sync": "node scripts/sync.mjs"
+  }
+}
